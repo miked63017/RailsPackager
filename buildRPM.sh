@@ -1,7 +1,8 @@
 #!/bin/bash
 export appname=$1
 
-cd /root/ScratchDrive/ || exit 1
+export cwd=`pwd`
+cd $cwd || exit 1
 rm -rf opt
 rm -rf etc
 rm -rf ruby-*
@@ -14,9 +15,9 @@ cd ruby-2.1.1
 
 ./configure --program-suffix=2.1.1 --prefix=/opt/$appname/usr
 make
-make install DESTDIR=/root/ScratchDrive
+make install DESTDIR=$cwd
 
-ln -s /root/ScratchDrive/opt/$appname /opt/
+ln -s $cwd/opt/$appname /opt/
 
 cd ../
 mkdir -p opt/$appname/var/www
@@ -80,6 +81,5 @@ EOF
 ./create_post_install.sh $appname
 
 fpm -s dir -t rpm -n "showterm-server" -v 1.0 --after-install ./post-install.sh -d postgresql -d postgresql-devel -d postgresql-server -d httpd -d httpd-devel -d nodejs -d nodejs-devel opt etc
-sysRpmPush SystemsFPM/prod/all
 
 
